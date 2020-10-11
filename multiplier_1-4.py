@@ -71,3 +71,8 @@ def measure_4pow():
     print(pd)
 
     df.to_excel(f'xlsx/умножитель-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+
+
+if __name__ == '__main__':
+    print('Прогрмаа для измерения 4х гармоник умножителя')
+    measure_4pow()
