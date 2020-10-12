@@ -70,7 +70,7 @@ def measure_4pow():
     df = pd.DataFrame(result, columns=['F, GHz', 'Px1, dB', 'Px2, dB', 'Px3, dB', 'Px4, dB'])
     print(pd)
 
-    df.to_excel(f'xlsx/умножитель-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+    df.to_excel(f'xlsx/mult-harmoic-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
 
 if __name__ == '__main__':
