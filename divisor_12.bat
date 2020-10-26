@@ -1,0 +1,1 @@
+python divisor_12.py

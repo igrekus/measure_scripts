@@ -1,0 +1,1 @@
+python divisor_6.py
