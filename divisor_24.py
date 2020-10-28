@@ -3,7 +3,8 @@ import time
 import visa
 
 import pandas as pd
-import numpy as np
+
+from itertools import groupby
 
 from config import instruments
 
@@ -55,12 +56,19 @@ def measure_1():
 
             result.append([f_gen, u_src, float(curr) * 1_000])
 
-    df = pd.DataFrame(result,
-                      columns=['F, GHz',
-                               f'Uin, V',
-                               f'I, mA'])
-    print(df)
+    res = sorted(result, key=lambda el: el[1])
 
+    freqs = sorted({el[0] for el in result})
+
+    res = {el[0]: list(el[1]) for el in groupby(res, key=lambda el: el[1])}
+    res = {k: [el[2] for el in v] for k, v in res.items()}
+
+    df = pd.DataFrame(
+        [[f] + currs for f, *currs in zip(freqs, *res.values())],
+        columns=['Fin, GHz'] + [f'I@Uin={u}, mA' for u in res],
+    )
+
+    print(df)
     df.to_excel(file_name)
 
 
