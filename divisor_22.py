@@ -5,6 +5,8 @@ import visa
 import pandas as pd
 import numpy as np
 
+from itertools import groupby
+
 from config import instruments
 
 # --- параметры измерения ---
@@ -63,12 +65,17 @@ def measure_1():
 
             result.append([f_gen, p_gen, float(curr) * 1_000])
 
-    df = pd.DataFrame(result,
-                      columns=['F, GHz',
-                               f'Pin, dB',
-                               f'I, mA'])
-    print(df)
+    freqs = sorted({el[0] for el in result})
 
+    res = {el[0]: list(el[1]) for el in groupby(sorted(result, key=lambda el: el[1]), key=lambda el: el[1])}
+    res = {k: [el[2] for el in v] for k, v in res.items()}
+
+    df = pd.DataFrame(
+        [[f] + currs for f, *currs in zip(freqs, *res.values())],
+        columns=['Fin, GHz'] + [f'I@Pin={p}, mA' for p in res],
+    )
+
+    print(df)
     df.to_excel(file_name)
 
 
