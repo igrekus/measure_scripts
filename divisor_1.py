@@ -1,9 +1,10 @@
 import datetime
+import openpyxl
 import time
 import visa
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from config import instruments
 
