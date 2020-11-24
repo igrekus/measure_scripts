@@ -99,7 +99,7 @@ def measure_6():
     ws = wb.active
 
     rows = len(df)
-    data = Reference(ws, range_string=f'{ws.title}!C1:{ascii_uppercase[len(cols) - 1]}{rows + 1}')
+    data = Reference(ws, range_string=f'{ws.title}!C1:{ascii_uppercase[len(cols)]}{rows + 1}')
     xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
 
     chart = LineChart()
