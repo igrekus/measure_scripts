@@ -89,8 +89,8 @@ def measure_1():
 
     ws.add_chart(chart, f'E4')
 
-    wb.close()
     wb.save(file_name)
+    wb.close()
 
 
 if __name__ == '__main__':

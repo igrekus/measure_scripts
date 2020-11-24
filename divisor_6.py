@@ -108,7 +108,7 @@ def measure_6():
 
     ws.add_chart(chart, f'I4')
 
-    wb.save(r'D:\work\python\mirea_measure\plots\out.xlsx')
+    wb.save(file_name)
     wb.close()
 
 
