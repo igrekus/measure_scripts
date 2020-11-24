@@ -63,16 +63,17 @@ def measure_1():
 
             print('read curr', curr)
 
-            result.append([f_gen, p_gen, float(curr) * 1_000])
+            result.append([p_gen, f_gen, float(curr) * 1_000])
 
-    freqs = sorted({el[0] for el in result})
+    pows = sorted({el[0] for el in result})
 
     res = {el[0]: list(el[1]) for el in groupby(sorted(result, key=lambda el: el[1]), key=lambda el: el[1])}
     res = {k: [el[2] for el in v] for k, v in res.items()}
 
+    cols = ['Pin, dB'] + [f'I@F={p}, mA' for p in res]
     df = pd.DataFrame(
-        [[f] + currs for f, *currs in zip(freqs, *res.values())],
-        columns=['Fin, GHz'] + [f'I@Pin={p}, mA' for p in res],
+        [[p] + currs for p, *currs in zip(pows, *res.values())],
+        columns=cols,
     )
 
     print(df)
