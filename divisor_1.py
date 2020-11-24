@@ -70,7 +70,8 @@ def measure_1():
 
         result.append([f_gen, float(pw1)])
 
-    df = pd.DataFrame(result, columns=['F, GHz', f'Pout@F/{coeff}, dB'])
+    cols = ['F, GHz', f'Pout@F/{coeff}, dB']
+    df = pd.DataFrame(result, columns=cols)
     print(df)
 
     df.to_excel(file_name)
