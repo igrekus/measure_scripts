@@ -1,4 +1,5 @@
 import datetime
+import openpyxl
 import time
 import visa
 
@@ -6,6 +7,9 @@ import pandas as pd
 import numpy as np
 
 from itertools import groupby
+from string import ascii_uppercase
+
+from openpyxl.chart import Reference, LineChart
 
 from config import instruments
 
@@ -78,6 +82,22 @@ def measure_1():
 
     print(df)
     df.to_excel(file_name)
+
+    wb = openpyxl.open(file_name)
+    ws = wb.active
+
+    rows = len(df)
+    data = Reference(ws, range_string=f'{ws.title}!C1:{ascii_uppercase[len(cols)]}{rows + 1}')
+    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+
+    chart = LineChart()
+    chart.add_data(data, titles_from_data=True)
+    chart.set_categories(xs)
+
+    ws.add_chart(chart, f'I4')
+
+    wb.save(file_name)
+    wb.close()
 
 
 if __name__ == '__main__':
