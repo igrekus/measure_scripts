@@ -89,26 +89,31 @@ def measure_1():
     for r, s in zip(result, ss):
         r.append(s)
 
-    df = pd.DataFrame(result, columns=['Uc, V', f'F, MHz', f'Px1, bDm', f'Px2, bDm', f'Px3, bDm', 'Isrc, mA', 'Tune, MHz/V'])
+    cols = ['Uc, V', f'F, MHz', f'Px1, bDm', f'Px2, bDm', f'Px3, bDm', 'Isrc, mA', 'Tune, MHz/V']
+    df = pd.DataFrame(result, columns=cols)
     print(df)
 
     df.to_excel(file_name)
 
-    # wb = openpyxl.open(file_name)
-    # ws = wb.active
-    #
-    # rows = len(df)
-    # data = Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}')
-    # xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
-    #
-    # chart = LineChart()
-    # chart.add_data(data, titles_from_data=True)
-    # chart.set_categories(xs)
-    #
-    # ws.add_chart(chart, f'E4')
-    #
-    # wb.close()
-    # wb.save(file_name)
+    wb = openpyxl.open(file_name)
+    ws = wb.active
+
+    rows = len(df)
+    letters = 'CDEFGH'
+
+    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+
+    for l in letters:
+        data = Reference(ws, range_string=f'{ws.title}!{l}1:{l}{rows + 1}')
+
+        chart = LineChart()
+        chart.add_data(data, titles_from_data=True)
+        chart.set_categories(xs)
+
+        ws.add_chart(chart, f'{chr(ord(l) + 7)}{(ord(l) - 65) * 2}')
+
+    wb.save(file_name)
+    wb.close()
 
 
 def _calc_s(f_pair, u_pair):
