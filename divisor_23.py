@@ -56,12 +56,10 @@ def measure_1():
 
             print('read curr', curr)
 
-            result.append([f_gen, p_gen, float(curr) * 1_000])
+            result.append([p_gen, f_gen, float(curr) * 1_000])
 
-    df = pd.DataFrame(result,
-                      columns=['F, GHz',
-                               f'Pin, dB',
-                               f'I, mA'])
+    cols = [f'Pin, dB', 'F, GHz', f'I@F=2GHz, mA']
+    df = pd.DataFrame(result, columns=cols)
     print(df)
 
     df.to_excel(file_name)
