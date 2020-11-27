@@ -1,4 +1,6 @@
 import datetime
+from itertools import groupby
+
 import openpyxl
 import time
 import visa
@@ -64,7 +66,15 @@ def measure_1():
 
             result.append([u_src, uc, freq / 1_000_000])
 
-    df = pd.DataFrame(result, columns=['Usrc, V', f'Uc, V', f'F, Mhz'])
+    u_srcs = sorted({el[0] for el in result})
+    res = {el[0]: list(el[1]) for el in groupby(result, key=lambda el: el[0])}
+    res = {k: [el[2] for el in v] for k, v in res.items()}
+
+    cols = ['Uc, V'] + [f'F@Usrc={u}, MHz' for u in res.keys()]
+    df = pd.DataFrame(
+        [[u] + freqs for u, *freqs in zip(u_srcs, *res.values())],
+        columns=cols
+    )
     print(df)
 
     df.to_excel(file_name)
