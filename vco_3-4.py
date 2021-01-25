@@ -67,6 +67,7 @@ def measure_1():
             result.append([u_src, uc, freq / 1_000_000])
 
     u_srcs = sorted({el[0] for el in result})
+
     res = {el[0]: list(el[1]) for el in groupby(result, key=lambda el: el[0])}
     res = {k: [el[2] for el in v] for k, v in res.items()}
 

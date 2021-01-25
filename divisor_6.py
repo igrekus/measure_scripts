@@ -90,7 +90,6 @@ def measure_6():
         [[f] + pows for f, *pows in zip(freqs, *res.values())],
         columns=cols
     )
-
     print(df)
 
     df.to_excel(file_name)
