@@ -1,9 +1,15 @@
 import datetime
 import time
+
 import visa
+import openpyxl
 
 import numpy as np
 import pandas as pd
+
+from itertools import groupby
+from string import ascii_uppercase
+from openpyxl.chart import Reference, LineChart
 
 from config import instruments
 
@@ -53,26 +59,34 @@ def measure():
             print('read u_out', u_out)
             result.append([f, p, float(u_out)])
 
-    df = pd.DataFrame(result, columns=['F, GHz', f'P, dB', f'Uout, V'])
-    print(df)
+    pows = sorted({el[1] for el in result})
+
+    res = {el[0]: list(el[1]) for el in groupby(result, key=lambda el: el[0])}
+    res = {k: [el[2] for el in v] for k, v in res.items()}
+
+    cols = ['Pin, dB'] + [f'Uout@P&Pin={f}, dBm' for f in res.keys()]
+    df = pd.DataFrame(
+        [[f] + freqs for f, *freqs in zip(pows, *res.values())],
+        columns=cols
+    )
 
     df.to_excel(file_name)
 
-    # wb = openpyxl.open(file_name)
-    # ws = wb.active
-    #
-    # rows = len(df)
-    # data = Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}')
-    # xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
-    #
-    # chart = LineChart()
-    # chart.add_data(data, titles_from_data=True)
-    # chart.set_categories(xs)
-    #
-    # ws.add_chart(chart, f'E4')
-    #
-    # wb.close()
-    # wb.save(file_name)
+    wb = openpyxl.open(file_name)
+    ws = wb.active
+
+    rows = len(df)
+    data = Reference(ws, range_string=f'{ws.title}!C1:{ascii_uppercase[len(cols)]}{rows + 1}')
+    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+
+    chart = LineChart()
+    chart.add_data(data, titles_from_data=True)
+    chart.set_categories(xs)
+
+    ws.add_chart(chart, f'P4')
+
+    wb.close()
+    wb.save(file_name)
 
 
 if __name__ == '__main__':
