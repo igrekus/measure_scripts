@@ -99,18 +99,46 @@ def measure_1():
     ws = wb.active
 
     rows = len(df)
-    letters = 'CDEFGH'
 
-    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_work_freq_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_work_freq_ys = Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}')
+    chart = LineChart()
+    chart.add_data(data_work_freq_ys, titles_from_data=True)
+    chart.set_categories(data_work_freq_xs)
+    chart.title = 'Диапазон рабочих частот'
+    ws.add_chart(chart, f'J2')
 
-    for l in letters:
-        data = Reference(ws, range_string=f'{ws.title}!{l}1:{l}{rows + 1}')
+    data_tune_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_tune_ys = Reference(ws, range_string=f'{ws.title}!H1:H{rows}')
+    chart = LineChart()
+    chart.add_data(data_tune_ys, titles_from_data=True)
+    chart.set_categories(data_tune_xs)
+    chart.title = 'Крутизна регулировочной характеристики'
+    ws.add_chart(chart, f'J17')
 
-        chart = LineChart()
-        chart.add_data(data, titles_from_data=True)
-        chart.set_categories(xs)
+    data_out_pow_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_out_pow_ys = Reference(ws, range_string=f'{ws.title}!D1:D{rows + 1}')
+    chart = LineChart()
+    chart.add_data(data_out_pow_ys, titles_from_data=True)
+    chart.set_categories(data_out_pow_xs)
+    chart.title = 'Выходная мощность'
+    ws.add_chart(chart, f'J32')
 
-        ws.add_chart(chart, f'{chr(ord(l) + 7)}{(ord(l) - 65) * 2}')
+    data_out_pow_harmonics_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_out_pow_harmonics_ys = Reference(ws, range_string=f'{ws.title}!E1:F{rows + 1}')
+    chart = LineChart()
+    chart.add_data(data_out_pow_harmonics_ys, titles_from_data=True)
+    chart.set_categories(data_out_pow_harmonics_xs)
+    chart.title = 'Мощность выходного сигнала паразитных гармоник (2-й и 3й)'
+    ws.add_chart(chart, f'S2')
+
+    data_current_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_current_ys = Reference(ws, range_string=f'{ws.title}!G1:G{rows + 1}')
+    chart = LineChart()
+    chart.add_data(data_current_ys, titles_from_data=True)
+    chart.set_categories(data_current_xs)
+    chart.title = 'Ток потребления'
+    ws.add_chart(chart, f'S17')
 
     wb.save(file_name)
     wb.close()

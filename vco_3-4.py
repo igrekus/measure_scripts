@@ -84,14 +84,14 @@ def measure_1():
     ws = wb.active
 
     rows = len(df)
-    data = Reference(ws, range_string=f'{ws.title}!C1:{ascii_uppercase[len(cols)]}{rows + 1}')
-    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
 
+    data_work_freq_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    data_work_freq_ys = Reference(ws, range_string=f'{ws.title}!C1:E{rows + 1}')
     chart = LineChart()
-    chart.add_data(data, titles_from_data=True)
-    chart.set_categories(xs)
-
-    ws.add_chart(chart, f'G4')
+    chart.add_data(data_work_freq_ys, titles_from_data=True)
+    chart.set_categories(data_work_freq_xs)
+    chart.title = 'Диапазон рабочих частот в зависимости от напряжения питания'
+    ws.add_chart(chart, f'G2')
 
     wb.save(file_name)
     wb.close()
