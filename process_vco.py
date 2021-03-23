@@ -8,10 +8,12 @@ from openpyxl.chart import Reference, LineChart
 
 
 def _fileter_xlsx(path):
+    print('finding .xlsx')
     return sorted([os.path.normpath(f'{path}/{p}') for p in os.listdir(path) if p.endswith('.xlsx')])
 
 
 def _is_file_list_valid(files):
+    print('validating file list')
     res = []
     for file in files:
         if 'vco-1-2' in file:
@@ -42,6 +44,7 @@ def main(path):
                          '- 3 файла с измерениями для пункта 6 для всех температур')
 
     for file in files:
+        print(f'reading {file}')
         if 'vco-1-2' in file and file.endswith('+25.xlsx'):
             df_1_2_25 = pd.read_excel(file, engine='openpyxl')
         if 'vco-1-2' in file and file.endswith('-60.xlsx'):
@@ -57,6 +60,7 @@ def main(path):
         if 'vco-6' in file and file.endswith('+85.xlsx'):
             df_6_85 = pd.read_excel(file, engine='openpyxl')
 
+    print('building data array')
     # Usrc = 4.7V
     df_1_2_25.columns = [f'{c}+25' if 'Uc, V' not in c else c for c in df_1_2_25.columns]
     df_1_2_25 = df_1_2_25.drop(['Unnamed: 0+25'], axis=1)
@@ -91,6 +95,7 @@ def main(path):
     result.to_excel(out_excel_name, engine='openpyxl')
 
     # save plots
+    print('making charts')
     wb = openpyxl.open(out_excel_name)
     ws = wb.active
 
@@ -193,6 +198,7 @@ def main(path):
         loc='K40'
     )
 
+    print(f'saving resulting {out_excel_name}')
     wb.save(out_excel_name)
     wb.close()
 
