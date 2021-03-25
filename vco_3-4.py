@@ -6,9 +6,7 @@ import visa
 import numpy as np
 import pandas as pd
 
-from itertools import groupby
 from openpyxl.chart import LineChart, Reference
-from string import ascii_uppercase
 
 from config import instruments
 
@@ -40,7 +38,7 @@ def measure_1():
     sa.write(f'BAMD 200khz')
     sa.write(f'frequency:start {band_start}mhz')
     sa.write(f'frequency:stop {band_end}mhz')
-
+    time.sleep(0.5)
     result = []
 
     ucs = [round(x, 2) for x in np.arange(start=uc_start, stop=uc_end + 0.2, step=uc_step)]
@@ -48,10 +46,11 @@ def measure_1():
 
     src.write('OUTP:CHAN1 ON')
     src.write('OUTP:MAST ON')
+    time.sleep(0.5)
     for u_src in u_sources:
         print('set source', u_src)
         src.write(f'APPLY {u_src}V,{i_source}ma,1')
-
+        time.sleep(0.5)
         for uc in ucs:
             src.write(f'APPLY {uc}V,{i_source}ma,2')
 
@@ -66,35 +65,26 @@ def measure_1():
 
             result.append([u_src, uc, freq / 1_000_000])
 
-    u_srcs = sorted({el[0] for el in result})
-
-    res = {el[0]: list(el[1]) for el in groupby(result, key=lambda el: el[0])}
-    res = {k: [el[2] for el in v] for k, v in res.items()}
-
-    cols = ['Uc, V'] + [f'F@Usrc={u}, MHz' for u in res.keys()]
-    df = pd.DataFrame(
-        [[u] + freqs for u, *freqs in zip(u_srcs, *res.values())],
-        columns=cols
-    )
+    df = pd.DataFrame(result, columns=['Usrc, V', f'Uc, V', f'F, Mhz'])
     print(df)
 
     df.to_excel(file_name)
 
-    wb = openpyxl.open(file_name)
-    ws = wb.active
-
-    rows = len(df)
-
-    data_work_freq_xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
-    data_work_freq_ys = Reference(ws, range_string=f'{ws.title}!C1:E{rows + 1}')
-    chart = LineChart()
-    chart.add_data(data_work_freq_ys, titles_from_data=True)
-    chart.set_categories(data_work_freq_xs)
-    chart.title = 'Диапазон рабочих частот в зависимости от напряжения питания'
-    ws.add_chart(chart, f'G2')
-
-    wb.save(file_name)
-    wb.close()
+    # wb = openpyxl.open(file_name)
+    # ws = wb.active
+    #
+    # rows = len(df)
+    # data = Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}')
+    # xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
+    #
+    # chart = LineChart()
+    # chart.add_data(data, titles_from_data=True)
+    # chart.set_categories(xs)
+    #
+    # ws.add_chart(chart, f'E4')
+    #
+    # wb.close()
+    # wb.save(file_name)
 
 
 if __name__ == '__main__':
