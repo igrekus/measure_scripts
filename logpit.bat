@@ -1,0 +1,2 @@
+python logpit.py
+pause
