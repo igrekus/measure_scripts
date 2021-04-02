@@ -85,73 +85,73 @@ def _get_curr_from_file_name(filename):
 
 
 def measure_1():
-    # # measure 1 - 4
-    # for in_file, out_file in zip(in_files, out_files):
-    #     volt = _get_volt_from_file_name(in_file)
-    #     print(f'set voltage: {volt}')
-    #     src.write(f'APPLY {volt}V,{120}ma,1')
-    #     src.write('OUTP:CHAN1 ON')
-    #     src.write('OUTP:MAST ON')
-    #
-    #     time.sleep(1)
-    #
-    #     print('load', in_file)
-    #     pna.write(in_file)
-    #     time.sleep(1)
-    #     print('save', out_file)
-    #     pna.write(out_file)
-    #     time.sleep(1)
+    # measure 1 - 4
+    for in_file, out_file in zip(in_files, out_files):
+        volt = _get_volt_from_file_name(in_file)
+        print(f'set voltage: {volt}')
+        src.write(f'APPLY {volt}V,{120}ma,1')
+        src.write('OUTP:CHAN1 ON')
+        src.write('OUTP:MAST ON')
 
-    # # measure 5 - 6
-    # fs = [round(x, 3) for x in np.linspace(f_start, f_end, int((f_end - f_start) / f_step) + 1, endpoint=True)]
-    # result_comp = []
-    # for comp_in, comp_val in zip(znx_comp_in, znx_comp_val):
-    #     volt = _get_volt_from_file_name(comp_in)
-    #     amp = _get_curr_from_file_name(comp_in)
-    #     print(f'set voltage: {volt}')
-    #     src.write(f'APPLY {volt}V,{120}ma,1')
-    #     src.write('OUTP:CHAN1 ON')
-    #     src.write('OUTP:MAST ON')
-    #
-    #     time.sleep(1)
-    #
-    #     print('load', comp_in)
-    #     pna.write(comp_in)
-    #     time.sleep(1)
-    #
-    #     for f in fs:
-    #         print('set F:', f)
-    #         pna.write(f'FREQ:CW {f}GHz')
-    #         time.sleep(1)
-    #         res = pna.query('CALC:STAT:NLIN:COMP:RES?')
-    #         print('read comp in/out:', res)
-    #         cmp_in, cmp_out = [float(s) for s in res.split(',')]
-    #
-    #         pae = 100 * (cmp_out - cmp_in) / (10 * math.log10(volt * amp * 1_000))
-    #
-    #         out = [f, comp_val, cmp_in, cmp_out, pae]
-    #         print(out)
-    #         result_comp.append(out)
-    #
-    # file_name = f'xlsx/amp-UV1-5-4-6-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
-    # df = pd.DataFrame(result_comp, columns=['F, GHz', 'Comp val' ,'Cmp in, dBm', 'Cmp out, dBm', 'PAE, %'])
-    # df.to_excel(file_name)
+        time.sleep(1)
 
-    # # measure 9
-    # print('load znx 9:', znx_9)
-    # pna.write(znx_9)
-    # for f in freqs:
-    #     pna.write(f'FREQ:CW {f}GHz')
-    #     time.sleep(1)
-    #     pna.write(f"MMEM:STOR:TRAC 'Trc1','c:\\users\\instrument\\desktop\\res\\uv1u\\9-{f}.csv',FORM,LOGP,COMM",)
+        print('load', in_file)
+        pna.write(in_file)
+        time.sleep(1)
+        print('save', out_file)
+        pna.write(out_file)
+        time.sleep(1)
 
-    # # measure 10
-    # print('load znx pow:', znx_10)
-    # pna.write(znx_10)
-    # for f in freqs:
-    #     pna.write(f'FREQ:CW {f}GHz')
-    #     time.sleep(1)
-    #     pna.write(f"MMEM:STOR:TRAC 'Trc1','c:\\users\\instrument\\desktop\\res\\uv1u\\10-{f}.csv',FORM,LOGP,COMM",)
+    # measure 5 - 6
+    fs = [round(x, 3) for x in np.linspace(f_start, f_end, int((f_end - f_start) / f_step) + 1, endpoint=True)]
+    result_comp = []
+    for comp_in, comp_val in zip(znx_comp_in, znx_comp_val):
+        volt = _get_volt_from_file_name(comp_in)
+        amp = _get_curr_from_file_name(comp_in)
+        print(f'set voltage: {volt}')
+        src.write(f'APPLY {volt}V,{120}ma,1')
+        src.write('OUTP:CHAN1 ON')
+        src.write('OUTP:MAST ON')
+
+        time.sleep(1)
+
+        print('load', comp_in)
+        pna.write(comp_in)
+        time.sleep(1)
+
+        for f in fs:
+            print('set F:', f)
+            pna.write(f'FREQ:CW {f}GHz')
+            time.sleep(1)
+            res = pna.query('CALC:STAT:NLIN:COMP:RES?')
+            print('read comp in/out:', res)
+            cmp_in, cmp_out = [float(s) for s in res.split(',')]
+
+            pae = 100 * (cmp_out - cmp_in) / (10 * math.log10(volt * amp * 1_000))
+
+            out = [f, comp_val, cmp_in, cmp_out, pae]
+            print(out)
+            result_comp.append(out)
+
+    file_name = f'xlsx/amp-UV1-5-4-6-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
+    df = pd.DataFrame(result_comp, columns=['F, GHz', 'Comp val' ,'Cmp in, dBm', 'Cmp out, dBm', 'PAE, %'])
+    df.to_excel(file_name)
+
+    # measure 9
+    print('load znx 9:', znx_9)
+    pna.write(znx_9)
+    for f in freqs:
+        pna.write(f'FREQ:CW {f}GHz')
+        time.sleep(1)
+        pna.write(f"MMEM:STOR:TRAC 'Trc1','c:\\users\\instrument\\desktop\\res\\uv1u\\9-{f}.csv',FORM,LOGP,COMM",)
+
+    # measure 10
+    print('load znx pow:', znx_10)
+    pna.write(znx_10)
+    for f in freqs:
+        pna.write(f'FREQ:CW {f}GHz')
+        time.sleep(1)
+        pna.write(f"MMEM:STOR:TRAC 'Trc1','c:\\users\\instrument\\desktop\\res\\uv1u\\10-{f}.csv',FORM,LOGP,COMM",)
 
     # measure 11
     # select pae from measure 9 for freq = [0.01, 1, 1.5] -> plot 3 freqs
