@@ -1,13 +1,10 @@
 import datetime
 import io
 import os
-from collections import defaultdict
-from pprint import pprint
 
-import openpyxl
 import pandas as pd
 
-from openpyxl.chart import Reference, LineChart
+from openpyxl.chart import LineChart
 
 
 # todo 1-33 -- usb (lf+lf2)/2
@@ -229,9 +226,6 @@ def main(path):
     dfs = _read_csvs_to_dfs(files)
     # _build_out_dfs(dfs)
 
-    # 1 cat - 1-5, 11-15, 30-33
-    # 2 cat - 6-10, 26-29
-
     print('extracting 1 band')
     df_for_1_cat = _build_1_cat_df(dfs)
     print('saving df for 1 band')
@@ -241,37 +235,6 @@ def main(path):
     df_for_2_cat = _build_2_cat_df(dfs)
     print('saving df for 2 band')
     df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
-
-    # save plots
-    # print('making charts')
-    # wb = openpyxl.open(out_excel_name)
-    # ws = wb.active
-    #
-    # rows = len(result)
-    #
-    # _add_chart(
-    #     ws=ws,
-    #     xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-    #     ys=[
-    #         Reference(ws, range_string=f'{ws.title}!C1:E{rows + 1}'),
-    #     ],
-    #     title='Зависимость коэффициента преобразования от частоты входного сигнала при разной частоте ПЧ',
-    #     loc='B10'
-    # )
-    #
-    # _add_chart(
-    #     ws=ws,
-    #     xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-    #     ys=[
-    #         Reference(ws, range_string=f'{ws.title}!F1:H{rows + 1}'),
-    #     ],
-    #     title='Зависимость коэффициента преобразования от частоты входного сигнала в диапазоне температур',
-    #     loc='K10'
-    # )
-    #
-    # print(f'saving resulting {out_excel_name}')
-    # wb.save(out_excel_name)
-    # wb.close()
 
 
 def _add_chart(ws, xs, ys, title, loc):
