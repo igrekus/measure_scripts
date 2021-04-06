@@ -242,6 +242,126 @@ def _build_1_33_measure_2_cat_df(dfs):
     return pd.concat(objs=filtered, axis=1)
 
 
+def _build_34_66_measure_1_cat_df(dfs):
+    # 1 cat - 34-38, 44-48, 63-66
+    filtered = [
+        dfs['LF1']['+25']['lsb'][0],   # 34 - B-G
+        dfs['LF1']['+25']['lsb'][1],
+        dfs['LF1']['+25']['lsb'][2],
+
+        dfs['LF1']['+25']['lsb'][14],   # 35 - H-O
+        dfs['LF1']['+25']['lsb'][15],
+        dfs['LF1']['+25']['lsb'][16],
+        dfs['LF1']['+25']['lsb'][17],
+
+        dfs['LF1']['+25']['lsb'][25],   # 36 - P-U
+        dfs['LF1']['-60']['lsb'][25],
+        dfs['LF1']['+85']['lsb'][25],
+
+        dfs['LF1']['+25']['lsb'][30],   # 37 - V-AA
+        dfs['LF1']['-60']['lsb'][30],
+        dfs['LF1']['+85']['lsb'][30],
+
+        dfs['LF1']['+25']['lsb'][31],   # 38 - AB-AG
+        dfs['LF1']['-60']['lsb'][31],
+        dfs['LF1']['+85']['lsb'][31],
+
+        dfs['LF1']['+25']['lsb'][4],   # 44 - AH-AM
+        dfs['LF1']['+25']['lsb'][5],
+        dfs['LF1']['+25']['lsb'][6],
+
+        dfs['LF1']['+25']['lsb'][7],   # 45 - AN-AU
+        dfs['LF1']['+25']['lsb'][8],
+        dfs['LF1']['+25']['lsb'][9],
+        dfs['LF1']['+25']['lsb'][10],
+
+        dfs['LF1']['+25']['lsb'][11],   # 46 - AV-BA
+        dfs['LF1']['-60']['lsb'][11],
+        dfs['LF1']['+85']['lsb'][11],
+
+        dfs['LF1']['+25']['lsb'][12],   # 47 - BB-BG
+        dfs['LF1']['-60']['lsb'][12],
+        dfs['LF1']['+85']['lsb'][12],
+
+        dfs['LF1']['+25']['lsb'][13],   # 48 - BH-BM
+        dfs['LF1']['-60']['lsb'][13],
+        dfs['LF1']['+85']['lsb'][13],
+
+        dfs['LF1']['+25']['lsb'][26],   # 63 - BN-BS
+        dfs['LF1']['-60']['lsb'][26],
+        dfs['LF1']['+85']['lsb'][26],
+
+        dfs['LF1']['+25']['lsb'][27],   # 64 - BT-BY
+        dfs['LF1']['-60']['lsb'][27],
+        dfs['LF1']['+85']['lsb'][27],
+
+        dfs['LF1']['+25']['lsb'][28],   # 65 - BZ-CE
+        dfs['LF1']['-60']['lsb'][28],
+        dfs['LF1']['+85']['lsb'][28],
+
+        dfs['LF1']['+25']['lsb'][29],   # 66 - CF-CK
+        dfs['LF1']['-60']['lsb'][29],
+        dfs['LF1']['+85']['lsb'][29],
+    ]
+
+    for idx in range(len(filtered)):
+        filtered[idx] = filtered[idx].applymap(lambda cell: float(cell.replace(',', '.')))
+        filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
+        filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
+
+    return pd.concat(objs=filtered, axis=1)
+
+
+def _build_34_66_measure_2_cat_df(dfs):
+    # 39-43, 59-62
+    filtered = [
+        dfs['LF1']['+25']['lsb'][32],   # 39 - B-G
+        dfs['LF1']['+25']['lsb'][33],
+        dfs['LF1']['+25']['lsb'][34],
+
+        dfs['LF1']['+25']['lsb'][35],   # 41 - H-O
+        dfs['LF1']['+25']['lsb'][36],
+        dfs['LF1']['+25']['lsb'][37],
+        dfs['LF1']['+25']['lsb'][38],
+
+        dfs['LF1']['+25']['lsb'][39],   # 42 - P-U
+        dfs['LF1']['-60']['lsb'][39],
+        dfs['LF1']['+85']['lsb'][39],
+
+        dfs['LF1']['+25']['lsb'][40],   # 43 - V-AA
+        dfs['LF1']['-60']['lsb'][40],
+        dfs['LF1']['+85']['lsb'][40],
+
+        dfs['LF1']['+25']['lsb'][3],   # 44 - AB-AG
+        dfs['LF1']['-60']['lsb'][3],
+        dfs['LF1']['+85']['lsb'][3],
+
+        dfs['LF1']['+25']['lsb'][18],   # 59 - AH-AO
+        dfs['LF1']['+25']['lsb'][19],
+        dfs['LF1']['+25']['lsb'][20],
+        dfs['LF1']['+25']['lsb'][21],
+
+        dfs['LF1']['+25']['lsb'][22],   # 60 - AP-AU
+        dfs['LF1']['-60']['lsb'][22],
+        dfs['LF1']['+85']['lsb'][22],
+
+        dfs['LF1']['+25']['lsb'][23],   # 61 - AV-BA
+        dfs['LF1']['-60']['lsb'][23],
+        dfs['LF1']['+85']['lsb'][23],
+
+        dfs['LF1']['+25']['lsb'][24],   # 62 - BB-BG
+        dfs['LF1']['-60']['lsb'][24],
+        dfs['LF1']['+85']['lsb'][24],
+    ]
+
+    for idx in range(len(filtered)):
+        filtered[idx] = filtered[idx].applymap(lambda cell: float(cell.replace(',', '.')))
+        filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
+        filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
+
+    return pd.concat(objs=filtered, axis=1)
+
+
 def main(path):
     files = _build_file_list(path)
     _validate_file_list(files)
@@ -257,6 +377,16 @@ def main(path):
     df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
     print('saving measure 1-33, 2 band')
     df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+
+    print('extracting measure 34-66, 1 band')
+    df_for_1_cat = _build_1_33_measure_1_cat_df(dfs)
+    print('saving measure 34-66, 1 band')
+    df_for_1_cat.to_excel(f'mixer-result-34-38_44-48_63-66-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+
+    print('extracting measure 34-66, 2 band')
+    df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
+    print('saving measure 34-66, 2 band')
+    df_for_2_cat.to_excel(f'mixer-result-39-43_59-62-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
 
 def _add_chart(ws, xs, ys, title, loc):
