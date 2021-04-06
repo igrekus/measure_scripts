@@ -248,14 +248,14 @@ def main(path):
     dfs = _read_csvs_to_dfs(files)
     # _build_out_dfs(dfs)
 
-    print('extracting 1 band')
+    print('extracting measure 1-33, 1 band')
     df_for_1_cat = _build_1_33_measure_1_cat_df(dfs)
-    print('saving df for 1 band')
+    print('saving measure 1-33, 1 band')
     df_for_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
-    print('extracting 2 band')
+    print('extracting measure 1-33, 2 band')
     df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
-    print('saving df for 2 band')
+    print('saving measure 1-33, 2 band')
     df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
 
