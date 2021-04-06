@@ -369,24 +369,22 @@ def main(path):
     # _build_out_dfs(dfs)
 
     print('extracting measure 1-33, 1 band')
-    df_for_1_cat = _build_1_33_measure_1_cat_df(dfs)
-    print('saving measure 1-33, 1 band')
-    df_for_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
-
+    df_for_1_33_1_cat = _build_1_33_measure_1_cat_df(dfs)
     print('extracting measure 1-33, 2 band')
-    df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
-    print('saving measure 1-33, 2 band')
-    df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
-
+    df_for_1_33_2_cat = _build_1_33_measure_2_cat_df(dfs)
     print('extracting measure 34-66, 1 band')
-    df_for_1_cat = _build_1_33_measure_1_cat_df(dfs)
-    print('saving measure 34-66, 1 band')
-    df_for_1_cat.to_excel(f'mixer-result-34-38_44-48_63-66-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
-
+    df_for_34_66_1_cat = _build_34_66_measure_1_cat_df(dfs)
     print('extracting measure 34-66, 2 band')
-    df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
+    df_for_34_66_2_cat = _build_34_66_measure_2_cat_df(dfs)
+
+    print('saving measure 1-33, 1 band')
+    df_for_1_33_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+    print('saving measure 1-33, 2 band')
+    df_for_1_33_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+    print('saving measure 34-66, 1 band')
+    df_for_34_66_1_cat.to_excel(f'mixer-result-34-38_44-48_63-66-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
     print('saving measure 34-66, 2 band')
-    df_for_2_cat.to_excel(f'mixer-result-39-43_59-62-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
+    df_for_34_66_2_cat.to_excel(f'mixer-result-39-43_59-62-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
 
 def _add_chart(ws, xs, ys, title, loc):
