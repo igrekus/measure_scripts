@@ -232,10 +232,12 @@ def main(path):
     # 1 cat - 1-5, 11-15, 30-33
     # 2 cat - 6-10, 26-29
 
+    print('extracting 1 band')
     df_for_1_cat = _build_1_cat_df(dfs)
     print('saving df for 1 band')
     df_for_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
+    print('extracting 2 band')
     df_for_2_cat = _build_2_cat_df(dfs)
     print('saving df for 2 band')
     df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
