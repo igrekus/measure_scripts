@@ -173,66 +173,45 @@ def _build_1_cat_df(dfs):
 
 
 def _build_2_cat_df(dfs):
-    # TODO implemet filter for cat2:
-    # 2 cat - 6-10, 26-29
+    # 6-10, 26-29
     filtered = [
-        dfs['LF1']['+25']['usb'][0],   # 1
-        dfs['LF1']['+25']['usb'][1],
-        dfs['LF1']['+25']['usb'][2],
+        dfs['LF1']['+25']['usb'][32],   # 6
+        dfs['LF1']['+25']['usb'][33],
+        dfs['LF1']['+25']['usb'][34],
 
-        dfs['LF1']['+25']['usb'][14],   # 2
-        dfs['LF1']['+25']['usb'][15],
-        dfs['LF1']['+25']['usb'][16],
-        dfs['LF1']['+25']['usb'][17],
+        dfs['LF1']['+25']['usb'][35],   # 7
+        dfs['LF1']['+25']['usb'][36],
+        dfs['LF1']['+25']['usb'][37],
+        dfs['LF1']['+25']['usb'][38],
 
-        dfs['LF1']['+25']['usb'][25],   # 3
-        dfs['LF1']['-60']['usb'][25],
-        dfs['LF1']['+85']['usb'][25],
+        dfs['LF1']['+25']['usb'][39],   # 8
+        dfs['LF1']['-60']['usb'][39],
+        dfs['LF1']['+85']['usb'][39],
 
-        dfs['LF1']['+25']['usb'][30],   # 4
-        dfs['LF1']['-60']['usb'][30],
-        dfs['LF1']['+85']['usb'][30],
+        dfs['LF1']['+25']['usb'][40],   # 9
+        dfs['LF1']['-60']['usb'][40],
+        dfs['LF1']['+85']['usb'][40],
 
-        dfs['LF1']['+25']['usb'][31],   # 5
-        dfs['LF1']['-60']['usb'][31],
-        dfs['LF1']['+85']['usb'][31],
+        dfs['LF1']['+25']['usb'][3],   # 10
+        dfs['LF1']['-60']['usb'][3],
+        dfs['LF1']['+85']['usb'][3],
 
-        dfs['LF1']['+25']['usb'][4],   # 11
-        dfs['LF1']['+25']['usb'][5],
-        dfs['LF1']['+25']['usb'][6],
+        dfs['LF1']['+25']['usb'][18],   # 26
+        dfs['LF1']['+25']['usb'][19],
+        dfs['LF1']['+25']['usb'][20],
+        dfs['LF1']['+25']['usb'][21],
 
-        dfs['LF1']['+25']['usb'][7],   # 12
-        dfs['LF1']['+25']['usb'][8],
-        dfs['LF1']['+25']['usb'][9],
-        dfs['LF1']['+25']['usb'][10],
+        dfs['LF1']['+25']['usb'][22],   # 27
+        dfs['LF1']['-60']['usb'][22],
+        dfs['LF1']['+85']['usb'][22],
 
-        dfs['LF1']['+25']['usb'][11],   # 13
-        dfs['LF1']['-60']['usb'][11],
-        dfs['LF1']['+85']['usb'][11],
+        dfs['LF1']['+25']['usb'][23],   # 28
+        dfs['LF1']['-60']['usb'][23],
+        dfs['LF1']['+85']['usb'][23],
 
-        dfs['LF1']['+25']['usb'][12],   # 14
-        dfs['LF1']['-60']['usb'][12],
-        dfs['LF1']['+85']['usb'][12],
-
-        dfs['LF1']['+25']['usb'][13],   # 15
-        dfs['LF1']['-60']['usb'][13],
-        dfs['LF1']['+85']['usb'][13],
-
-        dfs['LF1']['+25']['usb'][26],   # 30
-        dfs['LF1']['-60']['usb'][26],
-        dfs['LF1']['+85']['usb'][26],
-
-        dfs['LF1']['+25']['usb'][27],   # 31
-        dfs['LF1']['-60']['usb'][27],
-        dfs['LF1']['+85']['usb'][27],
-
-        dfs['LF1']['+25']['usb'][28],   # 32
-        dfs['LF1']['-60']['usb'][28],
-        dfs['LF1']['+85']['usb'][28],
-
-        dfs['LF1']['+25']['usb'][29],   # 33
-        dfs['LF1']['-60']['usb'][29],
-        dfs['LF1']['+85']['usb'][29],
+        dfs['LF1']['+25']['usb'][24],   # 29
+        dfs['LF1']['-60']['usb'][24],
+        dfs['LF1']['+85']['usb'][24],
     ]
 
     for idx in range(len(filtered)):
@@ -255,7 +234,9 @@ def main(path):
     df_for_1_cat = _build_1_cat_df(dfs)
     df_for_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
-    print(df_for_1_cat)
+    df_for_2_cat = _build_2_cat_df(dfs)
+    print('saving df for 2 band')
+    df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
     # save plots
     # print('making charts')
