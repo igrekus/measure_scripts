@@ -6,6 +6,32 @@ import pandas as pd
 
 from openpyxl.chart import LineChart
 
+# для категории 1, измерения 1-5, 11-15, 30-33
+# 1 - B-G
+# 2 - H-O
+# 3 - P-U
+# 4 - V-AA
+# 5 - AB-AG
+# 11 - AH-AM
+# 12 - AN-AU
+# 13 - AV-BA
+# 14 - BB-BG
+# 15 - BH-BM
+# 30 - BN-BS
+# 31 - BT-BY
+# 32 - BZ-CE
+# 33 - CF-CK
+
+# для категории 2, измерения 6-10, 26-29
+# 6 - B-G
+# 7 - H-O
+# 8 - P-U
+# 9 - V-AA
+# 10 - AB-AG
+# 26 - AH-AO
+# 27 - AP-AU
+# 28 - AV-BA
+# 29 - BB-BG
 
 
 csvs = [
