@@ -7,10 +7,6 @@ import pandas as pd
 from openpyxl.chart import LineChart
 
 
-# todo 1-33 -- usb (lf+lf2)/2
-# todo 34-66 -- lsb -||-
-# todo 67-end -- 1-33, only lf1, lsb
-# todo 1-33, 34-66  --
 
 csvs = [
     '1-10.csv',
