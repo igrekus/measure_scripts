@@ -122,7 +122,7 @@ def _read_csv(file):
         return pd.read_csv(io.StringIO('\n'.join(f.readlines()[2:])), sep=';').drop(['Unnamed: 2'], axis=1)
 
 
-def _build_1_cat_df(dfs):
+def _build_1_33_measure_1_cat_df(dfs):
     # 1 cat - 1-5, 11-15, 30-33
     filtered = [
         dfs['LF1']['+25']['usb'][0],   # 1 - B-G
@@ -192,7 +192,7 @@ def _build_1_cat_df(dfs):
     return pd.concat(objs=filtered, axis=1)
 
 
-def _build_2_cat_df(dfs):
+def _build_1_33_measure_2_cat_df(dfs):
     # 6-10, 26-29
     filtered = [
         dfs['LF1']['+25']['usb'][32],   # 6 - B-G
@@ -249,12 +249,12 @@ def main(path):
     # _build_out_dfs(dfs)
 
     print('extracting 1 band')
-    df_for_1_cat = _build_1_cat_df(dfs)
+    df_for_1_cat = _build_1_33_measure_1_cat_df(dfs)
     print('saving df for 1 band')
     df_for_1_cat.to_excel(f'mixer-result-1-5_11-15_30-33-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
     print('extracting 2 band')
-    df_for_2_cat = _build_2_cat_df(dfs)
+    df_for_2_cat = _build_1_33_measure_2_cat_df(dfs)
     print('saving df for 2 band')
     df_for_2_cat.to_excel(f'mixer-result-6-10_26-29-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx')
 
