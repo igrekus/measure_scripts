@@ -34,6 +34,34 @@ from openpyxl.chart import LineChart
 # 29 - BB-BG
 
 
+# для категории 1, измерения 34-38, 44-48, 63-66
+# 34 - B-G
+# 35 - H-O
+# 36 - P-U
+# 37 - V-AA
+# 38 - AB-AG
+# 44 - AH-AM
+# 45 - AN-AU
+# 46 - AV-BA
+# 47 - BB-BG
+# 48 - BH-BM
+# 63 - BN-BS
+# 64 - BT-BY
+# 65 - BZ-CE
+# 66 - CF-CK
+
+# для категории 2, измерения 39-43, 59-62
+# 39 - B-G
+# 40 - H-O
+# 41 - P-U
+# 42 - V-AA
+# 43 - AB-AG
+# 59 - AH-AO
+# 60 - AP-AU
+# 61 - AV-BA
+# 62 - BB-BG
+
+
 csvs = [
     '1-10.csv',
     '1-100.csv',
