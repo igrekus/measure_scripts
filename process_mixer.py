@@ -118,7 +118,6 @@ def _build_file_list(path):
 
 def _validate_file_list(file_dict):
     print('validating file list')
-    res = []
     for lf, temps in file_dict.items():
         for temp, bands in temps.items():
             for band, files in bands.items():
