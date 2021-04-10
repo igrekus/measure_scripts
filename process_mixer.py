@@ -1,10 +1,40 @@
 import datetime
 import io
+import itertools
 import os
 
 import pandas as pd
 
 from openpyxl.chart import LineChart
+
+cols_band1 = [
+    '1-10', '1-100', '1-1500',
+    '2-12', '2-14', '2-16', '2-18',
+    '3-+25', '3--60', '3-+85',
+    '4-+25', '4--60', '4-+85',
+    '5-+25', '5--60', '5-+85',
+    '11-10', '11-100', '11-1500',
+    '12-12', '12-14', '12-16', '12-18',
+    '13-+25', '13--60', '13-+85',
+    '14-+25', '14--60', '14-+85',
+    '15-+25', '15--60', '15-+85',
+    '30-+25', '30--60', '30-+85',
+    '31-+25', '31--60', '31-+85',
+    '32-+25', '32--60', '32-+85',
+    '33-+25', '33--60', '33-+85',
+]
+
+cols_band2 = [
+    '6-5.5', '6-6.5', '6-7.5',
+    '7-12', '7-14', '7-16', '7-18',
+    '8-+25', '8--60', '8-+85',
+    '9-+25', '9--60', '9-+85',
+    '10-+25', '10--60', '10-+85',
+    '26-12', '26-14', '26-16', '26-18',
+    '27-+25', '27--60', '27-+85',
+    '28-+25', '28--60', '28-+85',
+    '29-+25', '29--60', '29-+85',
+]
 
 # для категории 1, измерения 1-5, 11-15, 30-33
 # 1 - B-G
@@ -216,7 +246,9 @@ def _build_1_33_measure_1_cat_df(dfs):
         filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
         filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
 
-    return pd.concat(objs=filtered, axis=1)
+    out = pd.concat(objs=filtered, axis=1)
+    out.columns = itertools.chain(*[['freq[GHz]', col] for col in cols_band1])
+    return out
 
 
 def _build_1_33_measure_2_cat_df(dfs):
@@ -266,7 +298,9 @@ def _build_1_33_measure_2_cat_df(dfs):
         filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
         filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
 
-    return pd.concat(objs=filtered, axis=1)
+    out = pd.concat(objs=filtered, axis=1)
+    out.columns = itertools.chain(*[['freq[GHz]', col] for col in cols_band2])
+    return out
 
 
 def _build_34_66_measure_1_cat_df(dfs):
@@ -336,7 +370,9 @@ def _build_34_66_measure_1_cat_df(dfs):
         filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
         filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
 
-    return pd.concat(objs=filtered, axis=1)
+    out = pd.concat(objs=filtered, axis=1)
+    out.columns = itertools.chain(*[['freq[GHz]', col] for col in cols_band1])
+    return out
 
 
 def _build_34_66_measure_2_cat_df(dfs):
@@ -386,7 +422,9 @@ def _build_34_66_measure_2_cat_df(dfs):
         filtered[idx]['freq[Hz]'] = filtered[idx]['freq[Hz]'].apply(lambda row: row / 1_000_000_000)
         filtered[idx].columns = ['freq[GHz]', filtered[idx].columns[-1]]
 
-    return pd.concat(objs=filtered, axis=1)
+    out = pd.concat(objs=filtered, axis=1)
+    out.columns = itertools.chain(*[['freq[GHz]', col] for col in cols_band2])
+    return out
 
 
 def main(path):
