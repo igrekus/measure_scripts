@@ -112,102 +112,22 @@ def main(path):
     ws = wb.active
 
     rows = len(result)
-
+    xs = Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}')
     _add_chart(
         ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
+        xs=xs,
         ys=[
             Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!I1:I{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!O1:O{rows + 1}'),
-        ],
-        title='Диапазон рабочих частот',
-        loc='B10'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!U1:W{rows + 1}'),
-        ],
-        title='Диапазон рабочих частот в зависимости от напряжения питания',
-        loc='K10'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!H1:H{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!N1:N{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!T1:T{rows + 1}'),
-        ],
-        title='Крутизна регулировочной характеристики',
-        loc='T10'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!D1:D{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!J1:J{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!P1:P{rows + 1}'),
-        ],
-        title='Выходная мощность',
-        loc='B25'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!E1:E{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!K1:K{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!Q1:Q{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!F1:F{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!L1:L{rows + 1}'),
             Reference(ws, range_string=f'{ws.title}!R1:R{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AG1:AG{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AV1:AV{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BK1:BK{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BZ1:BZ{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CO1:CO{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DD1:DD{rows + 1}'),
         ],
-        title='Мощность выходного сигнала паразитных гармоник (2й и 3й) в диапазоне температур)',
-        loc='K25'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!G1:G{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!M1:M{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!S1:S{rows + 1}'),
-        ],
-        title='Ток потребления',
-        loc='T25'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!AD1:AD{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!AL1:AL{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!AT1:AT{rows + 1}'),
-        ],
-        title='Относительный уровень 2й гармоники',
-        loc='B40'
-    )
-
-    _add_chart(
-        ws=ws,
-        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
-        ys=[
-            Reference(ws, range_string=f'{ws.title}!AE1:AE{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!AM1:AM{rows + 1}'),
-            Reference(ws, range_string=f'{ws.title}!AU1:AU{rows + 1}'),
-        ],
-        title='Относительный уровень 3й гармоники',
-        loc='K40'
+        title='Частота, МГц',
+        loc='B23'
     )
 
     print(f'saving resulting {out_excel_name}')
