@@ -127,7 +127,7 @@ def main(path):
             Reference(ws, range_string=f'{ws.title}!DD1:DD{rows + 1}'),
         ],
         title='Частота, МГц',
-        loc='B23'
+        loc='B24'
     )
 
     print(f'saving resulting {out_excel_name}')
