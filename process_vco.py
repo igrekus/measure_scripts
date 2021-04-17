@@ -130,6 +130,40 @@ def main(path):
         loc='B24'
     )
 
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!H1:H{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!W1:W{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AL1:AL{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BA1:BA{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BP1:BP{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CE1:CE{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CT1:CT{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DI1:DI{rows + 1}'),
+        ],
+        title='Крутизна, МГц/В',
+        loc='K24'
+    )
+
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!Q1:Q{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AF1:AF{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AU1:AU{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BJ1:BJ{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BY1:BY{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CN1:CN{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DC1:DC{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DR1:DR{rows + 1}'),
+        ],
+        title='Крутизна, МГц/В',
+        loc='T24'
+    )
+
     print(f'saving resulting {out_excel_name}')
     wb.save(out_excel_name)
     wb.close()
