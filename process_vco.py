@@ -164,6 +164,49 @@ def main(path):
         loc='T24'
     )
 
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!D1:D{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!S1:S{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AH1:AH{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AW1:AW{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BL1:BL{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CA1:CA{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CP1:CP{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DE1:DE{rows + 1}'),
+        ],
+        title='Pвых, дБм',
+        loc='B39'
+    )
+
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!E1:E{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!T1:T{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AI1:AI{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AX1:AX{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BM1:BM{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CB1:CB{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CQ1:CQ{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DF1:DF{rows + 1}'),
+
+            Reference(ws, range_string=f'{ws.title}!F1:F{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!U1:U{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AJ1:AJ{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AY1:AY{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BN1:BN{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CC1:CC{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CR1:CR{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DG1:DG{rows + 1}'),
+        ],
+        title='Pвых гармоник, дБм',
+        loc='K39'
+    )
+
     print(f'saving resulting {out_excel_name}')
     wb.save(out_excel_name)
     wb.close()
