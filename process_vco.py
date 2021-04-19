@@ -232,7 +232,7 @@ def main(path):
             Reference(ws, range_string=f'{ws.title}!CS1:CS{rows + 1}'),
             Reference(ws, range_string=f'{ws.title}!DH1:DH{rows + 1}'),
         ],
-        title='Ток потребления, mA',
+        title='Ток потребления, мА',
         loc='T39'
     )
 
