@@ -104,6 +104,18 @@ def main(path):
     out_excel_name = f'vco-result{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
 
     result = pd.concat(objs=dfs, axis=1)
+
+    # abs harmonic + pow - 1 = delta Px2
+    cols_px1 = [f'({t}:1par) Px1, bDm' for t in temperatures]
+    cols_px2 = [f'({t}:1par) Px2, bDm' for t in temperatures]
+    cols_px3 = [f'({t}:1par) Px3, bDm' for t in temperatures]
+
+    for t, px1, px2 in zip(temperatures, cols_px1, cols_px2):
+        result[f'({t}) Rel Px2'] = result.apply(lambda row: -(abs(row[px2]) + row[px1]), axis=1)
+
+    for t, px1, px3 in zip(temperatures, cols_px1, cols_px3):
+        result[f'({t}) Rel Px3'] = result.apply(lambda row: -(abs(row[px3]) + row[px1]), axis=1)
+
     result.to_excel(out_excel_name, engine='openpyxl')
 
     # save plots
