@@ -253,7 +253,6 @@ def main(path):
         loc='B54'
     )
 
-
     _add_chart(
         ws=ws,
         xs=xs,
