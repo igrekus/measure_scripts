@@ -236,6 +236,41 @@ def main(path):
         loc='T39'
     )
 
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!DS1:DS{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DT1:DT{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DU1:DU{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DV1:DV{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DW1:DW{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DX1:DX{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DY1:DY{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DZ1:DZ{rows + 1}'),
+        ],
+        title='Относ. ур. 2й гарм., дБм',
+        loc='B54'
+    )
+
+
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!EA1:EA{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EB1:EB{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EC1:EC{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!ED1:ED{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EE1:EE{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EF1:EF{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EG1:EG{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!EH1:EH{rows + 1}'),
+        ],
+        title='Относ. ур. 3й гарм., дБм',
+        loc='K54'
+    )
+
     print(f'saving resulting {out_excel_name}')
     wb.save(out_excel_name)
     wb.close()
