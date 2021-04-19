@@ -207,6 +207,23 @@ def main(path):
         loc='K39'
     )
 
+    _add_chart(
+        ws=ws,
+        xs=xs,
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!G1:G{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!V1:V{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AK1:AK{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AZ1:AZ{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!BO1:BO{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CD1:CD{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!CS1:CS{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!DH1:DH{rows + 1}'),
+        ],
+        title='Ток потребления, mA',
+        loc='T39'
+    )
+
     print(f'saving resulting {out_excel_name}')
     wb.save(out_excel_name)
     wb.close()
