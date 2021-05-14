@@ -70,7 +70,7 @@ def measure_1():
         i_mul_read = float(mult.query('MEAS:CURR:DC? 1A,DEF'))
 
         raw_point = {
-            'u_src': u,
+            'u_mul': u,
             # 'u_mul': u_mul_read,
             'i_mul': i_mul_read,
         }
