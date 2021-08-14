@@ -34,13 +34,6 @@ params = {
 
 # ---------------------------
 
-rm = visa.ResourceManager()
-
-sa = rm.open_resource(instruments['анализатор спектра'])
-src = rm.open_resource(instruments['источник питания 1'])
-
-sa.send = sa.write
-src.send = src.write
 
 file_name = f'xlsx/vco-pulsar-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
 
@@ -111,6 +104,14 @@ def measure():
             result.append(res)
 
         return result
+
+    rm = visa.ResourceManager()
+
+    sa = rm.open_resource(instruments['анализатор спектра'])
+    src = rm.open_resource(instruments['источник питания 1'])
+
+    sa.send = sa.write
+    src.send = src.write
 
     print(sa.query('*IDN?'))
     print(src.query('*IDN?'))
