@@ -177,5 +177,56 @@ def measure():
     # [[0.0, -50.554], [1.0, -46.267], [2.0, -47.991], [3.0, -39.016], [4.0, -34.675], [5.0, -42.85], [6.0, -37.567], [7.0, -39.202], [8.0, -36.298], [9.0, -37.13], [10.0, -41.076]]
 
 
+def to_excel():
+    u_dr_1 = 4.7
+    u_dr_2 = 5.0
+    u_dr_3 = 5.3
+
+    result_harmonics_x2 = [[0.0, -22.006], [1.0, -25.104], [2.0, -23.253], [3.0, -24.527], [4.0, -21.237], [5.0, -23.507], [6.0, -28.615], [7.0, -37.745], [8.0, -38.494], [9.0, -42.876], [10.0, -38.98]]
+    result_harmonics_x3 = [[0.0, -50.554], [1.0, -46.267], [2.0, -47.991], [3.0, -39.016], [4.0, -34.675], [5.0, -42.85], [6.0, -37.567], [7.0, -39.202], [8.0, -36.298], [9.0, -37.13], [10.0, -41.076]]
+    result_harmonics_x2 = [[u_dr_1] + row for row in result_harmonics_x2]
+    result_harmonics_x3 = [[u_dr_1] + row for row in result_harmonics_x3]
+
+    df_harm_2 = pd.DataFrame(result_harmonics_x2, columns=['Uпит, В', 'Uупр, В', 'Pвых_2, дБм'])
+    df_harm_3 = pd.DataFrame(result_harmonics_x3, columns=['Uпит, В', 'Uупр, В', 'Pвых_3, дБм'])
+
+    df = pd.read_excel('./xlsx/vco-pulsar-2-2021-08-11T16.15.57.458610.xlsx', engine='openpyxl')
+
+    df['fdiff'] = df.groupby('Uпит, В')['Fвых, МГц'].diff().shift(-1)
+    df['udiff'] = df.groupby('Uпит, В')['Uупр, В'].diff().shift(-1)
+    df['S, МГц/В'] = df[df['fdiff'].notna()].apply(lambda row: (row['fdiff'] / row['udiff']) * 100, axis = 1)
+    df = df.drop(['fdiff', 'udiff'], axis=1)
+
+    df = pd.merge(df, df_harm_2, how='left', on=['Uпит, В', 'Uупр, В'])
+    df = pd.merge(df, df_harm_3, how='left', on=['Uпит, В', 'Uупр, В'])
+
+    df['Pвых_2отн, дБм'] = df[df['Pвых_2, дБм'].notna()].apply(lambda row: -(row['Pвых, дБм'] - row['Pвых_2, дБм']), axis=1)
+    df['Pвых_3отн, дБм'] = df[df['Pвых_3, дБм'].notna()].apply(lambda row: -(row['Pвых, дБм'] - row['Pвых_3, дБм']), axis=1)
+    df['S, МГц/В'] = df['S, МГц/В'].fillna(0)
+
+    df_udr_1 = df[df['Uпит, В'] == u_dr_1]
+    df_udr_2 = df[df['Uпит, В'] == u_dr_2]
+    df_udr_3 = df[df['Uпит, В'] == u_dr_3]
+
+    udr_1_s = [df_udr_1.columns.values.tolist()] + df_udr_1.values.tolist()
+    udr_2_s = [df_udr_2.columns.values.tolist()] + df_udr_2.values.tolist()
+    udr_3_s = [df_udr_3.columns.values.tolist()] + df_udr_3.values.tolist()
+
+    out = []
+    for r1, r2, r3 in zip(udr_1_s, udr_2_s, udr_3_s):
+        row = r1 + ['', ''] + r2 + ['', ''] + r3
+        out.append(row)
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+
+    for row in out:
+        ws.append(row)
+
+    wb.save('out.xlsx')
+
+
 if __name__ == '__main__':
-    measure()
+    # measure()
+
+    to_excel()
