@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 
 from openpyxl.chart import LineChart, Reference
+from openpyxl.chart import Series
+
 
 instruments = {
     'анализатор спектра': 'GPIB1::18::INSTR',
@@ -223,7 +225,70 @@ def to_excel():
     for row in out:
         ws.append(row)
 
+    rows = len(udr_1_s)
+
+    _add_chart(
+        ws=ws,
+        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!C1:C{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!O1:O{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AA1:AA{rows + 1}'),
+        ],
+        title='Диапазон перестройки',
+        loc='B15',
+        curve_labels=['Uпит = 4.7В', 'Uпит = 5.0В', 'Uпит = 5.3В']
+    )
+
+    _add_chart(
+        ws=ws,
+        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!D1:D{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!P1:P{rows + 1}'),
+            Reference(ws, range_string=f'{ws.title}!AB1:AB{rows + 1}'),
+        ],
+        title='Мощность',
+        loc='M15',
+        curve_labels=['Uпит = 4.7В', 'Uпит = 5.0В', 'Uпит = 5.3В']
+    )
+
+    _add_chart(
+        ws=ws,
+        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!I1:I{rows + 1}'),
+        ],
+        title='Относительный уровень 2й гармоники',
+        loc='B30',
+        curve_labels=['Uпит = 4.7В']
+    )
+
+    _add_chart(
+        ws=ws,
+        xs=Reference(ws, range_string=f'{ws.title}!B1:B{rows + 1}'),
+        ys=[
+            Reference(ws, range_string=f'{ws.title}!J1:J{rows + 1}'),
+        ],
+        title='Относительный уровень 3й гармоники',
+        loc='M30',
+        curve_labels=['Uпит = 4.7В']
+    )
+
     wb.save('out.xlsx')
+
+
+def _add_chart(ws, xs, ys, title, loc, curve_labels=None):
+    chart = LineChart()
+
+    for y, label in zip(ys, curve_labels):
+        ser = Series(y, title=label)
+        chart.append(ser)
+
+    chart.set_categories(xs)
+    chart.title = title
+
+    ws.add_chart(chart, loc)
 
 
 if __name__ == '__main__':
