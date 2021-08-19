@@ -71,7 +71,7 @@ def measure():
 
                 read_i = float(src.query('MEAS:CURR? p6v')) * 1_000
 
-                res = [u_dr, uc, read_f , read_p, read_i]
+                res = [u_dr, uc, read_f, read_p, read_i]
                 print('read values', res)
 
                 result.append(res)
