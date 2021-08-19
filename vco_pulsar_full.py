@@ -17,7 +17,9 @@ instruments = {
 
 # --- параметры измерения ---
 params = {
-    'u_src': 4.7,
+    'u_src_drift1': 4.7,
+    'u_src_drift2': 0,
+    'u_src_drift3': 0,
     'i_src_max': 300.0,
     'u_vco_min': 0.0,
     'u_vco_max': 10.0,
@@ -26,12 +28,6 @@ params = {
     'sa_max': 12.5,
     'sa_rlev': 30.0,
     'sa_span': 50.0,
-    'is_harm_relative': False,
-    'is_u_src_drift': False,
-    'u_src_drift1': 4.7,
-    'u_src_drift2': 0,
-    'u_src_drift3': 0,
-    'is_p_out_2': False,
 }
 
 # ---------------------------
@@ -122,7 +118,6 @@ def measure():
     src.send('OUTP OFF')
     sa.send('*RST')
 
-    u_src = params['u_src']
     i_src_max = params['i_src_max'] / 1_000
 
     u_tune_min = params['u_vco_min']
