@@ -1,273 +1,273 @@
+import ast
 import time
 import visa
 
 import numpy as np
 
+
+class Token:
+    cancelled = False
+
+
 instruments = {
-    'Осциллограф': 'GPIB1::7::INSTR',
-    'P LO': 'GPIB1::6::INSTR',
-    'P RF': 'GPIB1::20::INSTR',
-    'Источник': 'GPIB1::3::INSTR',
-    'Мультиметр': 'GPIB1::2::INSTR',
+    # 'Осциллограф': 'GPIB1::7::INSTR',
     'Анализатор': 'GPIB1::18::INSTR',
+    'P LO': 'GPIB1::19::INSTR',
+    'P RF': 'GPIB1::6::INSTR',
+    'Источник': 'GPIB1::3::INSTR',
+    'Мультиметр': 'GPIB1::22::INSTR',
 }
 
 rm = visa.ResourceManager()
 
 gen_lo = rm.open_resource(instruments['P LO'])
-gen_rf = rm.open_resource(instruments['P RF'])
-osc = rm.open_resource(instruments['Осциллограф'])
+gen_mod = rm.open_resource(instruments['P RF'])
+# osc = rm.open_resource(instruments['Осциллограф'])
 src = rm.open_resource(instruments['Источник'])
 mult = rm.open_resource(instruments['Мультиметр'])
 sa = rm.open_resource(instruments['Анализатор'])
 
+gen_lo.send = gen_lo.write
+gen_mod.send = gen_mod.write
+# osc.send = osc.write
+src.send = src.write
+mult.send = mult.write
+sa.send = sa.write
+
+mock_enabled = False
+
+token = Token()
+
+MILLI = 1 / 1_000
+GIGA = 1_000_000_000
+MEGA = 1_000_000
+KILO = 1_000
+
+calibrated_pows_lo = {}
+calibrated_pows_rf = {}
+
+gen_lo.send('*RST')
+gen_mod.send('*RST')
+# osc = rm.open_resource(instruments['Осциллограф'])
+src.send('*RST')
+mult.send('*RST')
+sa.send('*RST')
+
 
 def measure_1():
-    src_u = 5.0
-    src_i = 200  # mA
-    pow_lo_start = -10.0
-    pow_lo_end = 0.0
-    pow_lo_step = 5.0
-    freq_lo_start = 0.09
-    freq_lo_end = 5.99
-    freq_lo_step = 0.1
-    freq_lo_x2 = False
+    secondary = {'Plo_min': -10.0,
+                 'Plo_max': 0.0,
+                 'Plo_delta': 5.0,
+                 'Flo_min': 0.05,
+                 'Flo_max': 6.05,
+                 'Flo_delta': 0.2,
+                 'Fmod': 1.0,
+                 'Umod': 30.0,
+                 'Uoffs': 250.0,
+                 'is_Flo_div2': False,
+                 'D': True,
+                 'Usrc': 5.0,
+                 'UsrcD': 3.3,
+                 'sa_rlev': 10.0,
+                 'sa_scale_y': 10.0,
+                 'sa_span': 10.0,
+                 'sa_avg_state': True,
+                 'sa_avg_count': 16.0}
 
-    pow_rf = -10.0
-    freq_rf_start = 0.1
-    freq_rf_end = 6.0
-    freq_rf_step = 0.1
+    def set_read_marker(freq):
+        sa.send(f':CALCulate:MARKer1:X {freq}Hz')
+        if not mock_enabled:
+            time.sleep(0.01)
+        return float(sa.query(':CALCulate:MARKer:Y?'))
 
-    loss = 0.82
+    lo_pow_start = secondary['Plo_min']
+    lo_pow_end = secondary['Plo_max']
+    lo_pow_step = secondary['Plo_delta']
+    lo_f_start = secondary['Flo_min'] * GIGA
+    lo_f_end = secondary['Flo_max'] * GIGA
+    lo_f_step = secondary['Flo_delta'] * GIGA
 
-    osc_avg = 'ON'
+    lo_f_is_div2 = secondary['is_Flo_div2']
+    d = secondary['D']
 
-    osc_scale = 0.1
-    osc_timebase_coeff = 1.0
+    mod_f = secondary['Fmod'] * MEGA
+    mod_u = secondary['Umod']  # %
+    mod_u_offs = secondary['Uoffs'] * MILLI
+    mod_f_offs_0 = 0.5 * MEGA
 
-    mock_enabled = False
+    src_u = secondary['Usrc']
+    src_i_max = 200 * MILLI
+    src_u_d = secondary['UsrcD']
+    src_i_d_max = 20 * MILLI
 
-    gen_lo.write('*RST')
-    gen_rf.write('*RST')
-    osc.write('*RST')
-    src.write('*RST')
-    mult.write('*RST')
-    sa.write('*RST')
+    sa_rlev = secondary['sa_rlev']
+    sa_scale_y = secondary['sa_scale_y']
+    sa_span = secondary['sa_span'] * MEGA
 
-    src.write(f'APPLY p6v,{src_u}V,{src_i}mA')
+    sa_avg_state = 'ON' if secondary['sa_avg_state'] else 'OFF'
+    sa_avg_count = secondary['sa_avg_count']
 
-    osc.write(f':ACQ:AVERage {osc_avg}')
+    pow_lo_values = [
+        round(x, 3) for x in
+        np.arange(start=lo_pow_start, stop=lo_pow_end + 0.002, step=lo_pow_step)
+    ] if lo_pow_start != lo_pow_end else [lo_pow_start]
 
-    osc.write(f':CHANnel1:DISPlay ON')
-    osc.write(f':CHANnel2:DISPlay ON')
+    freq_lo_values = [
+        round(x, 3) for x in
+        np.arange(start=lo_f_start, stop=lo_f_end + 0.0001, step=lo_f_step)
+    ]
 
-    osc.write(':CHAN1:SCALE 0.05')  # V
-    osc.write(':CHAN2:SCALE 0.05')
-    osc.write(':TIMEBASE:SCALE 10E-8')  # ms / div
+    waveform_filename = 'WFM1:SINE_TEST_WFM'
 
-    osc.write(':TRIGger:MODE EDGE')
-    osc.write(':TRIGger:EDGE:SOURCe CHANnel1')
-    osc.write(':TRIGger:LEVel CHANnel1,0')
-    osc.write(':TRIGger:EDGE:SLOPe POSitive')
+    gen_lo.send(f':OUTP:MOD:STAT OFF')
+    gen_mod.send(f':OUTP:MOD:STAT OFF')
 
-    osc.write(':MEASure:VAMPlitude channel1')
-    osc.write(':MEASure:VAMPlitude channel2')
-    osc.write(':MEASure:PHASe CHANnel1,CHANnel2')
-    osc.write(':MEASure:FREQuency CHANnel1')
+    gen_f_mul = 2 if d else 1
+    gen_lo.send(f':FREQ:MULT {gen_f_mul}')
+    # gen_mod.send(f':FREQ:MULT {gen_f_mul}')
 
-    pow_lo_values = [round(x, 3) for x in np.arange(start=pow_lo_start, stop=pow_lo_end + 0.0001, step=pow_lo_step)] \
-        if pow_lo_start != pow_lo_end else [pow_lo_start]
-    freq_lo_values = [round(x, 3) for x in
-                      np.arange(start=freq_lo_start, stop=freq_lo_end + 0.0001, step=freq_lo_step)]
-    freq_rf_values = [round(x, 3) for x in
-                      np.arange(start=freq_rf_start, stop=freq_rf_end + 0.0001, step=freq_rf_step)]
+    gen_mod.send(f':RAD:ARB OFF')
+    gen_mod.send(f':RAD:ARB:WAV "{waveform_filename}"')
+    gen_mod.send(f':RAD:ARB:BASE:FREQ:OFFS {mod_f + mod_f_offs_0}Hz')
+    gen_mod.send(f':RAD:ARB:RSC {mod_u}')
+    gen_mod.send(f':DM:IQAD:EXT:COFF {mod_u_offs}V')
+    gen_mod.send(f':DM:IQAD ON')
+    gen_mod.send(f':DM:STAT ON')
+    gen_mod.send(f':DM:IQAD:EXT:IQAT 0db')
 
-    gen_lo.write(f':OUTP:MOD:STAT OFF')
-    # gen_rf.write(f':OUTP:MOD:STAT OFF')
+    src.send(f'APPLY p6v,{src_u}V,{src_i_max}A')
+    src.send(f'APPLY p25v,{src_u_d}V,{src_i_d_max}A')
 
-    low_signal_threshold = 1.1
-    range_ratio = 1.2
+    sa.send(':CAL:AUTO OFF')
+    sa.send(f':SENS:FREQ:SPAN {sa_span}Hz')
+    sa.send(f'DISP:WIND:TRAC:Y:RLEV {sa_rlev}')
+    sa.send(f'DISP:WIND:TRAC:Y:PDIV {sa_scale_y}')
+    sa.send(':CALC:MARK1:MODE POS')
+    sa.send(f'AVER:COUNT {sa_avg_count}')
+    sa.send(f'AVER {sa_avg_state}')
 
     res = []
-    for pow_lo in pow_lo_values:
+    for lo_pow in pow_lo_values:
 
-        for freq_lo, freq_rf in zip(freq_lo_values, freq_rf_values):
+        for lo_freq in freq_lo_values:
 
-            if freq_lo_x2:
-                freq_lo *= 2
+            freq_sa = lo_freq
+            if lo_f_is_div2:
+                lo_freq *= 2
 
-            gen_lo.write(f'SOUR:POW {round(pow_lo, 2)}dbm')
-            gen_rf.write(f'SOUR:POW {round(pow_rf, 2)}dbm')
+            if token.cancelled:
+                gen_lo.send(f'OUTP:STAT OFF')
+                gen_mod.send(f'OUTP:STAT OFF')
+                gen_mod.send(f':RAD:ARB OFF')
+                if not mock_enabled:
+                    time.sleep(0.5)
+                src.send('OUTPut OFF')
 
-            gen_lo.write(f'SOUR:FREQ {freq_lo}GHz')
-            gen_rf.write(f'SOUR:FREQ {freq_rf}GHz')
+                gen_lo.send(f'SOUR:POW {lo_pow_start}dbm')
+                gen_lo.send(f'SOUR:FREQ {lo_f_start}Hz')
+
+                sa.send(':CAL:AUTO ON')
+                raise RuntimeError('measurement cancelled')
+
+            pow_loss = calibrated_pows_lo.get(lo_pow, dict()).get(lo_freq, 0) / 2
+            gen_lo.send(f'SOUR:POW {lo_pow + pow_loss}dbm')
+            gen_lo.send(f'SOUR:FREQ {lo_freq}Hz')
 
             # TODO hoist out of the loops
-            src.write('OUTPut ON')
+            src.send('OUTPut ON')
 
-            gen_lo.write(f'OUTP:STAT ON')
-            gen_rf.write(f'OUTP:STAT ON')
+            gen_lo.send(f'OUTP:STAT ON')
+            gen_mod.send(f'OUTP:STAT ON')
+            gen_mod.send(f':RAD:ARB ON')
 
-            osc.write(':CDISplay')
-
-            # time.sleep(0.5)
+            # time.sleep(0.1)
             if not mock_enabled:
-                time.sleep(2)
+                time.sleep(0.6)
 
-            stats = osc.query(':MEASure:RESults?')
+            sa.send(f'DISP:WIND:TRAC:X:OFFS {0}Hz')
+            center_f = freq_sa / 2 if d else freq_sa
+            sa.send(f':SENSe:FREQuency:CENTer {center_f}Hz')
+            offset = freq_sa / 2 if d else 0
+            sa.send(f'DISP:WIND:TRAC:X:OFFS {offset}Hz')
 
-            stats_split = stats.split(',')
-            osc_ch1_amp = float(stats_split[18])
-            osc_ch2_amp = float(stats_split[25])
-            osc_phase = float(stats_split[11])
-            osc_ch1_freq = float(stats_split[4])
-
-            timebase = (1 / (abs(freq_rf - ((freq_lo / 2) if freq_lo_x2 else freq_lo)) * 10_000_000)) * 0.01 * osc_timebase_coeff
-            osc.write(f':TIMEBASE:SCALE {timebase}')  # ms / div
-            osc.write(f':CHANnel1:OFFSet 0')
-            osc.write(f':CHANnel2:OFFSet 0')
-
-            max_amp = osc_ch1_amp if osc_ch1_amp > osc_ch2_amp else osc_ch2_amp
+            print('>>>>>>>>>>>>>>>>>>>>>>>>', lo_freq, freq_sa, center_f, offset)
 
             if not mock_enabled:
-                # check if auto-scale is needed:
-                # some of the measure points go out of OSC display range resulting in incorrect measurement
-                # this is correct external device behaviour, not a program bug
-                if max_amp < 1_000_000:
-                    # if reading is correct, check if the signal is too small
-                    big_amp, ch_num = (osc_ch1_amp, 1) if osc_ch1_amp > osc_ch2_amp else (osc_ch2_amp, 2)
-                    current_scale = float(osc.query(f':CHAN{ch_num}:SCALE?'))
+                time.sleep(1)
 
-                    # if signal fits in less than 1.5 sections of the display, is is too small, need to
-                    # auto scale OSC display up
-                    while big_amp / current_scale <= low_signal_threshold:
+            if lo_f_is_div2:
+                f_out = freq_sa + mod_f
+                sa_p_out = set_read_marker(f_out)
 
-                        target_range = big_amp + big_amp * range_ratio
+                f_carr = freq_sa
+                sa_p_carr = set_read_marker(f_carr)
 
-                        osc.write(f':CHANnel1:RANGe {target_range}')
-                        osc.write(f':CHANnel2:RANGe {target_range}')
+                f_sb = freq_sa - mod_f
+                sa_p_sb = set_read_marker(f_sb)
 
-                        osc.write(':CDIS')
+                f_3_harm = freq_sa - 3 * mod_f
+                sa_p_3_harm = set_read_marker(f_3_harm)
+            else:
+                f_out = freq_sa - mod_f
+                sa_p_out = set_read_marker(f_out)
 
-                        time.sleep(2)
+                f_carr = freq_sa
+                sa_p_carr = set_read_marker(f_carr)
 
-                        autofit_stats_split = osc.query(':MEASure:RESults?').split(',')
+                f_sb = freq_sa + mod_f
+                sa_p_sb = set_read_marker(f_sb)
 
-                        osc_ch1_amp = float(autofit_stats_split[18])
-                        osc_ch2_amp = float(autofit_stats_split[25])
+                f_3_harm = freq_sa + 3 * mod_f
+                sa_p_3_harm = set_read_marker(f_3_harm)
 
-                        big_amp, ch_num = (osc_ch1_amp, 1) if osc_ch1_amp > osc_ch2_amp else (osc_ch2_amp, 2)
-                        current_scale = float(osc.query(f':CHAN{ch_num}:SCALE?'))
-                else:
-                    # if reading was not correct, reset OSC display range to safe level (controlled via GUI)
-                    # and iterate OSC range scaling a few times
-                    # to get the correct reading
-                    max_amp = osc_ch1_amp if osc_ch1_amp > osc_ch2_amp else osc_ch2_amp
-                    if max_amp > 1_000_000:
+            # lo_p_read = float(gen_lo.query('SOUR:POW?'))
+            # lo_f_read = float(gen_lo.query('SOUR:FREQ?'))
 
-                        osc.write(f':CHANnel1:RANGe {osc_scale}')
-                        osc.write(f':CHANnel2:RANGe {osc_scale}')
-
-                        osc.write(':CDIS')
-
-                        time.sleep(2)
-
-                        autofit_stats_split = osc.query(':MEASure:RESults?').split(',')
-                        osc_ch1_amp = float(autofit_stats_split[18])
-                        osc_ch2_amp = float(autofit_stats_split[25])
-
-                        # check if safe level results in too small signal
-                        big_amp, ch_num = (osc_ch1_amp, 1) if osc_ch1_amp > osc_ch2_amp else (osc_ch2_amp, 2)
-                        current_scale = float(osc.query(f':CHAN{ch_num}:SCALE?'))
-
-                        # if signal fits in less than 1.5 sections of the display, auto scale OSC display up
-                        while big_amp / current_scale <= low_signal_threshold:
-
-                            if token.cancelled:
-                                gen_lo.write(f'OUTP:STAT OFF')
-                                gen_rf.write(f'OUTP:STAT OFF')
-                                time.sleep(0.5)
-                                src.write('OUTPut OFF')
-
-                                gen_rf.write(f'SOUR:POW {pow_rf}dbm')
-                                gen_lo.write(f'SOUR:POW {pow_lo_start}dbm')
-
-                                gen_rf.write(f'SOUR:FREQ {freq_rf_start}GHz')
-                                gen_lo.write(f'SOUR:FREQ {freq_rf_start}GHz')
-                                raise RuntimeError('measurement cancelled')
-
-                            target_range = big_amp + big_amp * range_ratio
-
-                            osc.write(f':CHANnel1:RANGe {target_range}')
-                            osc.write(f':CHANnel2:RANGe {target_range}')
-
-                            osc.write(':CDIS')
-
-                            time.sleep(2)
-
-                            autofit_stats_split = osc.query(':MEASure:RESults?').split(',')
-
-                            osc_ch1_amp = float(autofit_stats_split[18])
-                            osc_ch2_amp = float(autofit_stats_split[25])
-
-                            big_amp, ch_num = (osc_ch1_amp, 1) if osc_ch1_amp > osc_ch2_amp else (osc_ch2_amp, 2)
-                            current_scale = float(osc.query(f':CHAN{ch_num}:SCALE?'))
-                        else:
-                            # if safe level is acceptable, select largest signal
-                            # and fit the display to 130% of the signal
-                            max_amp = osc_ch1_amp if osc_ch1_amp > osc_ch2_amp else osc_ch2_amp
-                            target_range = max_amp * range_ratio
-                            if target_range < 1_000_000:
-                                osc.write(f':CHANnel1:RANGe {target_range}')
-                                osc.write(f':CHANnel2:RANGe {target_range}')
-
-            # read actual amp values after auto-scale (if any occured)
-            osc.write(':CDIS')
-
-            time.sleep(2)
-
-            stats_split = osc.query(':MEASure:RESults?').split(',')
-            osc_ch1_amp = float(stats_split[18])
-            osc_ch2_amp = float(stats_split[25])
-
-            f_lo_read = float(gen_lo.query('SOUR:FREQ?'))
-            f_rf_read = float(gen_rf.query('SOUR:FREQ?'))
-
-            i_src_read = float(mult.query('MEAS:CURR:DC? 1A,DEF'))
+            src_u_read = src_u
+            src_i_read = float(mult.query('MEAS:CURR:DC? 1A,DEF'))
 
             raw_point = {
-                'p_lo': pow_lo,
-                'f_lo': f_lo_read,
-                'p_rf': pow_rf,
-                'f_rf': f_rf_read,
-                'u_src': src_u,   # power source voltage
-                'i_src': i_src_read,
-                'ch1_amp': osc_ch1_amp,
-                'ch2_amp': osc_ch2_amp,
-                'phase': osc_phase,
-                'ch1_freq': osc_ch1_freq,
-                'loss': loss,
+                'lo_p': lo_pow,
+                'lo_f': lo_freq,
+                'src_u': src_u_read,  # power source voltage as set in GUI
+                'src_i': src_i_read,
+                'sa_p_out': sa_p_out,
+                'sa_p_carr': sa_p_carr,
+                'sa_p_sb': sa_p_sb,
+                'sa_p_3_harm': sa_p_3_harm,
+                'loss': pow_loss,
             }
 
+            if mock_enabled:
+                raw_point = mocked_raw_data[index]
+                raw_point['loss'] = pow_loss
+                raw_point['lo_f'] = lo_freq
+                index += 1
 
-            print(raw_point, stats)
-            res.append([raw_point, stats])
+            print(raw_point)
+            res.append(raw_point)
 
-    gen_lo.write(f'OUTP:STAT OFF')
-    gen_rf.write(f'OUTP:STAT OFF')
-    time.sleep(0.5)
-    src.write('OUTPut OFF')
+    gen_lo.send(f'OUTP:STAT OFF')
+    gen_mod.send(f'OUTP:STAT OFF')
+    gen_mod.send(f':RAD:ARB OFF')
+    if not mock_enabled:
+        time.sleep(0.5)
+    src.send('OUTPut OFF')
 
-    gen_rf.write(f'SOUR:POW {pow_rf}dbm')
-    gen_lo.write(f'SOUR:POW {pow_lo_start}dbm')
+    gen_lo.send(f'SOUR:POW {lo_pow_start}dbm')
+    gen_lo.send(f'SOUR:FREQ {lo_f_start}Hz')
 
-    gen_rf.write(f'SOUR:FREQ {freq_rf_start}GHz')
-    gen_lo.write(f'SOUR:FREQ {freq_rf_start}GHz')
+    sa.send(':CAL:AUTO ON')
+
+    if not mock_enabled:
+        with open('out.txt', mode='wt', encoding='utf-8') as f:
+            f.write(str(res))
+
+    return res
 
 
 if __name__ == '__main__':
     measure_1()
-
 
 """
 
