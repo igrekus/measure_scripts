@@ -119,7 +119,7 @@ def measure():
 
         result.append(point)
 
-    gen.send('OUTP OFF')`
+    gen.send('OUTP OFF')
 
 
 if __name__ == '__main__':
