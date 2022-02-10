@@ -7,7 +7,7 @@ import numpy as np
 
 instruments = {
     'Генератор': 'ASRL6::INSTR',
-    'Мощность': 'GPIB3::1::INSTR',
+    'Мощность': 'GPIB2::1::INSTR',
     'Источник': 'GPIB3::4::INSTR',
 }
 
@@ -64,8 +64,6 @@ def measure():
     meter.send('FORMat ASCII')
     # meter.send('TRIG:SOUR INT1')
     # meter.send('INIT:CONT ON')
-
-    first = True
 
     # автоматическое измерение ошибается в первой точке, измеряем пустышку
     # почему - хз
